@@ -14,6 +14,7 @@ It allows you to resize images, adjust brightness, display individual color chan
 
 ## Requirements
 
+- Git
 - Python 3.8
 - PyQt5
 - OpenCV
@@ -22,7 +23,7 @@ It allows you to resize images, adjust brightness, display individual color chan
 
 ### Standard Installation
 
-1. Ensure you have Python 3.8 or later installed. You can download it from the [official Python website](https://www.python.org/downloads/).
+1. Ensure you have Python 3.8. You can download it from the [official Python website](https://www.python.org/downloads/).
 2. Clone the project repository:
     ```sh
     git clone https://github.com/ellohar/Photo-Editor.git
@@ -34,27 +35,31 @@ It allows you to resize images, adjust brightness, display individual color chan
     ```
 
 ### Installation with Virtual Environment
-1. Ensure you have Python 3.6 or later installed. You can download it from the [official Python website](https://www.python.org/downloads/).
+1. Ensure you have Python 3.8. You can download it from the [official Python website](https://www.python.org/downloads/).
 
 2. Clone the project repository:
     ```sh
     git clone https://github.com/ellohar/Photo-Editor.git
     cd Photo-Editor
     ```
-3. Install the virtual environment package:
+3. Install py:
     ```sh
-    pip install virtualenv
+    pip install py
     ```
 4. Create a virtual environment:
     ```sh
-    python3.8 -m venv venv
+    py -3.8 -m venv venv
     ```
 5. Activate the virtual environment:
    On Windows:
      ```sh
      venv\Scripts\activate
      ```
-6. Install the required dependencies:
+6. Upgrade pip:
+   ```
+   python -m pip install --upgrade pip
+   ```
+7. Install the required dependencies:
     ```sh
     pip install -r requirements.txt
     ```
