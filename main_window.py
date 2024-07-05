@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self.current_pixmap = None
         self.original_pixmap = None
         self.cv_image = None
+        self.original_image = None
         self.setWindowTitle("Photo Editor")
 
         main_widget = QWidget(self)
@@ -116,6 +117,7 @@ class MainWindow(QMainWindow):
                 image = self.load_image_with_cv2(file_path)
                 if image is not None:
                     self.cv_image = image
+                    self.original_image = image.copy()
                     pixmap = self.convert_cvimage_to_qpixmap(image)
                     if pixmap is not None:
                         self.display_image(pixmap)
@@ -265,41 +267,63 @@ class MainWindow(QMainWindow):
             self.apply_brightness(percentage)
 
     def apply_brightness(self, percentage):
-        """Apply the brightness adjustment to the image"""
-        if not self.image_label.pixmap():
+        """Apply the brightness adjustment to the image using OpenCV"""
+        if self.original_image is None:
             QMessageBox.warning(self, "Warning", "Please load an image first.")
             return
 
+        # Calculate the brightness factor
         factor = percentage / 100.0
-        brightened_image = cv2.convertScaleAbs(self.cv_image, alpha=factor, beta=0)
 
+        # Apply brightness adjustment based on the original image
+        brightened_image = cv2.convertScaleAbs(self.original_image, alpha=factor, beta=0)
+
+        # Convert the updated image back to QPixmap
         h, w, ch = brightened_image.shape
         bytes_per_line = ch * w
-        q_image = QImage(brightened_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        q_image = QImage(brightened_image.data, w, h, bytes_per_line, QImage.Format_BGR888)
 
         scaled_image = q_image.scaled(self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.image_label.setPixmap(QPixmap.fromImage(scaled_image))
         self.current_pixmap = QPixmap.fromImage(scaled_image)
+        self.cv_image = brightened_image
 
     def draw_rectangle(self):
-        """Draw a blue rectangle on the image"""
+        """Draw a filled blue rectangle on the image"""
         if self.cv_image is None:
             QMessageBox.warning(self, "Warning", "Please load an image first.")
             return
 
-        current_width = self.current_pixmap.width()
-        current_height = self.current_pixmap.height()
+        original_width = self.cv_image.shape[1]
+        original_height = self.cv_image.shape[0]
+        display_width = self.image_label.width()
+        display_height = self.image_label.height()
 
-        dialog = RectangleDialog(current_width, current_height, self)
+        dialog = RectangleDialog(display_width, display_height, self)
 
         if dialog.exec_():
             x, y, width, height = dialog.get_rectangle_params()
 
-            # Draw rectangle on current_pixmap
-            painter = QPainter(self.current_pixmap)
-            painter.setBrush(Qt.blue)
-            painter.drawRect(x, y, width, height)
-            painter.end()
+            # Calculate scaling factors
+            scale_x = original_width / display_width
+            scale_y = original_height / display_height
 
-            # Display modified pixmap
-            self.image_label.setPixmap(self.current_pixmap)
+            # Scale the rectangle coordinates and size to match the original image size
+            x = int(x * scale_x)
+            y = int(y * scale_y)
+            width = int(width * scale_x)
+            height = int(height * scale_y)
+
+            # Draw filled rectangle on the cv_image using cv2
+            rect_image = self.cv_image.copy()
+            cv2.rectangle(rect_image, (x, y), (x + width, y + height), (255, 0, 0), -1)
+
+            # Convert the updated image back to QPixmap
+            h, w, ch = rect_image.shape
+            bytes_per_line = ch * w
+            q_image = QImage(rect_image.data, w, h, bytes_per_line, QImage.Format_BGR888)
+
+            scaled_image = q_image.scaled(self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image_label.setPixmap(QPixmap.fromImage(scaled_image))
+            self.current_pixmap = QPixmap.fromImage(scaled_image)
+            self.cv_image = rect_image
