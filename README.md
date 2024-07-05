@@ -21,21 +21,7 @@ It allows you to resize images, adjust brightness, display individual color chan
 
 ## Installation
 
-### Standard Installation
-
-1. Ensure you have Python 3.8. You can download it from the [official Python website](https://www.python.org/downloads/).
-2. Clone the project repository:
-    ```sh
-    git clone https://github.com/ellohar/Photo-Editor.git
-    cd Photo-Editor
-    ```
-3. Install the required dependencies using pip:
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-### Installation with Virtual Environment
-1. Ensure you have Python 3.8. You can download it from the [official Python website](https://www.python.org/downloads/).
+1. Ensure you have Python 3.8. You can download it from the [official Python website](https://www.python.org/downloads/release/python-3810/).
 
 2. Clone the project repository:
     ```sh
@@ -48,12 +34,12 @@ It allows you to resize images, adjust brightness, display individual color chan
     ```
 4. Create a virtual environment:
     ```sh
-    py -3.8 -m venv venv
+    py -3.8 -m newenv venv
     ```
 5. Activate the virtual environment:
    On Windows:
      ```sh
-     venv\Scripts\activate
+     newenv\Scripts\activate
      ```
 6. Upgrade pip:
    ```
